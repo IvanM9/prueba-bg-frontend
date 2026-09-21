@@ -1,1 +1,155 @@
-<p>order-detail-component works!</p>
+<div class="min-h-screen bg-slate-100 px-4 py-8">
+  <div class="mx-auto w-full max-w-4xl">
+    <a
+      routerLink="/orders"
+      class="text-sm font-semibold text-indigo-600 transition hover:text-indigo-800"
+    >
+      ← Volver al historial
+    </a>
+
+    <header class="mb-6 mt-2">
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900">Detalle de la orden</h1>
+      <p class="mt-1 text-sm text-slate-500">
+        @if (order(); as detail) {
+          Orden #{{ detail.id }} del {{ detail.createdAt | date: 'medium' }}.
+        } @else {
+          Consulta los productos y totales de tu compra.
+        }
+      </p>
+    </header>
+
+    @if (loading()) {
+      <div
+        class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+        aria-label="Cargando detalle de la orden"
+      >
+        <div class="animate-pulse space-y-4">
+          @for (skeleton of [1, 2, 3]; track skeleton) {
+            <div class="flex items-center gap-4">
+              <div class="h-10 flex-1 rounded bg-slate-200"></div>
+              <div class="h-10 w-24 rounded bg-slate-200"></div>
+              <div class="h-10 w-20 rounded bg-slate-200"></div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else if (notFound()) {
+      <div class="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+        <p class="text-base font-semibold text-slate-900">Orden no encontrada</p>
+        <p class="mt-1 text-sm text-slate-500">
+          La orden que buscas no existe o no pertenece a tu cuenta.
+        </p>
+        <a
+          routerLink="/orders"
+          class="mt-5 inline-block rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+        >
+          Volver al historial
+        </a>
+      </div>
+    } @else if (loadError()) {
+      <div
+        role="alert"
+        class="rounded-2xl border border-red-200 bg-white p-10 text-center shadow-sm"
+      >
+        <p class="text-sm font-medium text-slate-900">Ocurrió un error</p>
+        <p class="mt-1 text-sm text-slate-500">{{ loadError() }}</p>
+        <button
+          type="button"
+          (click)="retry()"
+          class="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+        >
+          Reintentar
+        </button>
+      </div>
+    } @else if (order(); as detail) {
+      <dl class="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
+        <div class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <dt class="text-xs uppercase tracking-wide text-slate-500">Número de orden</dt>
+          <dd class="mt-1 text-lg font-bold text-slate-900">#{{ detail.id }}</dd>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <dt class="text-xs uppercase tracking-wide text-slate-500">Fecha</dt>
+          <dd class="mt-1 font-semibold text-slate-900">
+            {{ detail.createdAt | date: 'medium' }}
+          </dd>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <dt class="text-xs uppercase tracking-wide text-slate-500">Artículos</dt>
+          <dd class="mt-1 font-semibold text-slate-900">
+            {{ itemCount() }} {{ itemCount() === 1 ? 'artículo' : 'artículos' }}
+          </dd>
+        </div>
+      </dl>
+
+      <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <section
+          class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:col-span-2"
+          aria-label="Productos de la orden"
+        >
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-[480px] text-left text-sm">
+              <thead>
+                <tr class="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                  <th scope="col" class="px-5 py-3 font-semibold">Producto</th>
+                  <th scope="col" class="px-5 py-3 text-right font-semibold">Precio unitario</th>
+                  <th scope="col" class="px-5 py-3 text-center font-semibold">Cantidad</th>
+                  <th scope="col" class="px-5 py-3 text-right font-semibold">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                @for (item of items(); track item.productId) {
+                  <tr>
+                    <td class="px-5 py-4">
+                      <p class="font-semibold text-slate-900">{{ item.productName }}</p>
+                    </td>
+                    <td class="whitespace-nowrap px-5 py-4 text-right text-slate-700">
+                      {{ item.unitPrice | currency: 'USD' : 'symbol' : '1.2-2' }}
+                    </td>
+                    <td class="px-5 py-4 text-center text-slate-700">{{ item.quantity }}</td>
+                    <td class="whitespace-nowrap px-5 py-4 text-right font-semibold text-slate-900">
+                      {{ item.lineSubtotal | currency: 'USD' : 'symbol' : '1.2-2' }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside
+          class="h-fit rounded-2xl border border-slate-200 bg-white p-5 shadow-sm lg:sticky lg:top-6"
+          aria-label="Totales de la orden"
+        >
+          <h2 class="text-base font-semibold text-slate-900">Totales</h2>
+          <dl class="mt-4 space-y-2.5 text-sm">
+            <div class="flex items-center justify-between">
+              <dt class="text-slate-500">Subtotal</dt>
+              <dd class="font-medium text-slate-900">
+                {{ detail.subtotal | currency: 'USD' : 'symbol' : '1.2-2' }}
+              </dd>
+            </div>
+            @if (detail.discount > 0) {
+              <div class="flex items-center justify-between text-green-700">
+                <dt>
+                  Descuento
+                  <span class="block text-xs font-normal text-green-600">
+                    10% por compra mayor a $100
+                  </span>
+                </dt>
+                <dd class="font-medium">
+                  −{{ detail.discount | currency: 'USD' : 'symbol' : '1.2-2' }}
+                </dd>
+              </div>
+            }
+            <div class="flex items-center justify-between border-t border-slate-200 pt-3">
+              <dt class="text-base font-bold text-slate-900">Total</dt>
+              <dd class="text-xl font-bold tracking-tight text-indigo-700">
+                {{ detail.total | currency: 'USD' : 'symbol' : '1.2-2' }}
+              </dd>
+            </div>
+          </dl>
+        </aside>
+      </div>
+    }
+  </div>
+</div>

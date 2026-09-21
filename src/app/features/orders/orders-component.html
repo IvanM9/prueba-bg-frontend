@@ -1,1 +1,110 @@
-<p>orders-component works!</p>
+<div class="min-h-screen bg-slate-100 px-4 py-8">
+  <div class="mx-auto w-full max-w-6xl">
+    <header class="mb-6">
+      <h1 class="text-2xl font-bold tracking-tight text-slate-900">Mis compras</h1>
+      <p class="mt-1 text-sm text-slate-500">
+        @if (loading()) {
+          Cargando tu historial…
+        } @else if (orders().length > 0) {
+          {{ orders().length }} {{ orders().length === 1 ? 'compra realizada' : 'compras realizadas' }}.
+        } @else {
+          Aquí verás el historial de tus compras.
+        }
+      </p>
+    </header>
+
+    @if (loading()) {
+      <div
+        class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+        aria-label="Cargando historial de compras"
+      >
+        <div class="animate-pulse space-y-4">
+          @for (skeleton of [1, 2, 3]; track skeleton) {
+            <div class="flex items-center gap-4">
+              <div class="h-10 flex-1 rounded bg-slate-200"></div>
+              <div class="h-10 w-24 rounded bg-slate-200"></div>
+              <div class="h-10 w-20 rounded bg-slate-200"></div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else if (loadError()) {
+      <div
+        role="alert"
+        class="rounded-2xl border border-red-200 bg-white p-10 text-center shadow-sm"
+      >
+        <p class="text-sm font-medium text-slate-900">Ocurrió un error</p>
+        <p class="mt-1 text-sm text-slate-500">{{ loadError() }}</p>
+        <button
+          type="button"
+          (click)="retry()"
+          class="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+        >
+          Reintentar
+        </button>
+      </div>
+    } @else if (isEmpty()) {
+      <div class="rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+        <p class="text-base font-semibold text-slate-900">Aún no has realizado compras</p>
+        <p class="mt-1 text-sm text-slate-500">
+          Explora el catálogo y haz tu primera compra.
+        </p>
+        <a
+          routerLink="/products"
+          class="mt-5 inline-block rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+        >
+          Ver productos
+        </a>
+      </div>
+    } @else {
+      <section
+        class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+        aria-label="Historial de compras"
+      >
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[720px] text-left text-sm">
+            <thead>
+              <tr class="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <th scope="col" class="px-5 py-3 font-semibold">Fecha</th>
+                <th scope="col" class="px-5 py-3 text-center font-semibold">Artículos</th>
+                <th scope="col" class="px-5 py-3 text-right font-semibold">Subtotal</th>
+                <th scope="col" class="px-5 py-3 text-right font-semibold">Descuento</th>
+                <th scope="col" class="px-5 py-3 text-right font-semibold">Total</th>
+                <th scope="col" class="px-5 py-3 text-center font-semibold">
+                  <span class="sr-only">Acciones</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              @for (order of orders(); track order.id) {
+                <tr class="transition hover:bg-slate-50">
+                  <td class="whitespace-nowrap px-5 py-4 text-slate-700">
+                    {{ order.createdAt | date: 'medium' }}
+                  </td>
+                  <td class="px-5 py-4 text-center text-slate-700">{{ order.itemCount }}</td>
+                  <td class="whitespace-nowrap px-5 py-4 text-right text-slate-700">
+                    {{ order.subtotal | currency: 'USD' : 'symbol' : '1.2-2' }}
+                  </td>
+                  <td class="whitespace-nowrap px-5 py-4 text-right text-slate-700">
+                    {{ order.discount | currency: 'USD' : 'symbol' : '1.2-2' }}
+                  </td>
+                  <td class="whitespace-nowrap px-5 py-4 text-right font-semibold text-slate-900">
+                    {{ order.total | currency: 'USD' : 'symbol' : '1.2-2' }}
+                  </td>
+                  <td class="px-5 py-4 text-center">
+                    <a
+                      [routerLink]="['/orders', order.id]"
+                      class="rounded-lg px-3 py-1.5 text-sm font-semibold text-indigo-600 transition hover:bg-indigo-50 hover:text-indigo-800"
+                    >
+                      Ver detalle
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  </div>
+</div>

@@ -1,7 +1,8 @@
 export interface OrderSummary {
   id: number;
-  createdAt: Date;
+  createdAt: string;
   subtotal: number;
   discount: number;
+  total: number;
   itemCount: number;
 }
