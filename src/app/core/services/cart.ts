@@ -13,6 +13,18 @@ export class CartService {
     return this.api.post<Cart>('/cart/items', { productId, quantity });
   }
 
+  updateItem(productId: number, quantity: number): Observable<Cart> {
+    return this.api.put<Cart>(`/cart/items/${productId}`, { quantity });
+  }
+
+  removeItem(productId: number): Observable<void> {
+    return this.api.delete<void>(`/cart/items/${productId}`);
+  }
+
+  clearCart(): Observable<void> {
+    return this.api.delete<void>('/cart');
+  }
+
   getCart(): Observable<Cart> {
     return this.api.get<Cart>('/cart');
   }
