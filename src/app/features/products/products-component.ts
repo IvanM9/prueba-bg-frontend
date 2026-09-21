@@ -2,14 +2,14 @@ import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angula
 import { CurrencyPipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Products } from '../../core/services/products';
 import { CartService } from '../../core/services/cart';
 import { Product } from '../../core/models/product';
 
 interface Feedback {
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'info';
   text: string;
 }
 
@@ -25,6 +25,7 @@ const LOW_STOCK_THRESHOLD = 3;
 export class ProductsComponent implements OnInit {
   private readonly productsService = inject(Products);
   private readonly cartService = inject(CartService);
+  private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly searchControl = new FormControl('', { nonNullable: true });
@@ -54,6 +55,10 @@ export class ProductsComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    const notice = this.route.snapshot.queryParamMap.get('notice');
+    if (notice?.trim()) {
+      this.showFeedback({ type: 'info', text: notice });
+    }
     this.loadProducts(this.searchControl.value);
 
     const searchSub = this.searchControl.valueChanges

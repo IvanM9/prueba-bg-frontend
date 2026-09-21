@@ -59,6 +59,9 @@
         [class.border-red-200]="message.type === 'error'"
         [class.bg-red-50]="message.type === 'error'"
         [class.text-red-700]="message.type === 'error'"
+        [class.border-blue-200]="message.type === 'info'"
+        [class.bg-blue-50]="message.type === 'info'"
+        [class.text-blue-700]="message.type === 'info'"
       >
         {{ message.text }}
       </div>
