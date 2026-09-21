@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration production --define API_URL=\"'$API_URL'\"",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:bg_frontend": "node dist/bg_frontend/server/server.mjs"
