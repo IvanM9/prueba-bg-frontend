@@ -2,7 +2,7 @@ import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angula
 import { CurrencyPipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Products } from '../../core/services/products';
 import { CartService } from '../../core/services/cart';
@@ -18,7 +18,7 @@ const LOW_STOCK_THRESHOLD = 3;
 
 @Component({
   selector: 'app-products-component',
-  imports: [CurrencyPipe, ReactiveFormsModule, RouterLink],
+  imports: [CurrencyPipe, ReactiveFormsModule],
   templateUrl: './products-component.html',
   styleUrl: './products-component.css',
 })

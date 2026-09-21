@@ -1,12 +1,18 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './shared/components/header/header-component';
+import { Auth } from './core/services/auth';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, HeaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('bg_frontend');
+export class App implements OnInit {
+  private readonly auth = inject(Auth);
+
+  ngOnInit(): void {
+    this.auth.me().subscribe();
+  }
 }
