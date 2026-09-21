@@ -4,8 +4,13 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-    token: string;
+    token?: string;
     email: string;
     role: string;
     expiresAt: Date;
+}
+
+export interface MeResponse {
+    email: string;
+    role: string;
 }

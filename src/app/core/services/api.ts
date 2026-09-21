@@ -10,19 +10,19 @@ export class Api {
   private http = inject(HttpClient);
 
   post<T>(url: string, body: any) {
-    return this.http.post<T>(url, body);
+    return this.http.post<T>(this.baseUrl + url, body, { withCredentials: true });
   }
 
   get<T>(url: string) {
-    return this.http.get<T>(url);
+    return this.http.get<T>(this.baseUrl + url, { withCredentials: true });
   }
 
   put<T>(url: string, body: any) {
-    return this.http.put<T>(url, body);
+    return this.http.put<T>(this.baseUrl + url, body, { withCredentials: true });
   }
 
   delete<T>(url: string) {
-    return this.http.delete<T>(url);
+    return this.http.delete<T>(this.baseUrl + url, { withCredentials: true });
   }
 
 }
